@@ -33,13 +33,15 @@ public class PatientController {
 	@Autowired
 	private SequenceGeneratorService sequenceGeneratorService;
 
+	private Object updatedPatient;
+
 	@GetMapping("/patient")
-	public List<Patient> getAllEmployees() {
+	public List<Patient> getAllPatients() {
 		return patientRepository.findAll();
 	}
 
 	@GetMapping("/patients/{id}")
-	public ResponseEntity<Patient> getEmployeeById(@PathVariable(value = "id") Long patientId)
+	public ResponseEntity<Patient> getPatientById(@PathVariable(value = "id") Long patientId)
 			throws ResourceNotFoundException {
 		Patient patient = patientRepository.findById(patientId)
 				.orElseThrow(() -> new ResourceNotFoundException("Patient details not found for this id :: " + patientId));
@@ -47,30 +49,30 @@ public class PatientController {
 	}
 
 	@PostMapping("/patients")
-	public Patient createEmployee(@Valid @RequestBody Patient employee) {
-		employee.setId(sequenceGeneratorService.generateSequence(Patient.SEQUENCE_NAME));
-		return patientRepository.save(employee);
+	public Patient createPatient(@Valid @RequestBody Patient patient) {
+		patient.setId(sequenceGeneratorService.generateSequence(Patient.SEQUENCE_NAME));
+		return patientRepository.save(patient);
 	}
 
 	@PutMapping("/patient/{id}")
-	public ResponseEntity<Patient> updateEmployee(@PathVariable(value = "id") Long employeeId,
-			@Valid @RequestBody Patient employeeDetails) throws ResourceNotFoundException {
-		Patient employee = patientRepository.findById(employeeId)
-				.orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + employeeId));
+	public ResponseEntity<Patient> updatepatient(@PathVariable(value = "id") Long patientId,
+			@Valid @RequestBody Patient patientDetails) throws ResourceNotFoundException {
+		Patient patient = patientRepository.findById(patientId)
+				.orElseThrow(() -> new ResourceNotFoundException("patient not found for this id :: " + patientId));
 
-		employee.setPatientName(employeeDetails.getPatientName());
-		employee.setPatientContactNo(employeeDetails.getPatientContactNo());
-		final Patient updatedEmployee = patientRepository.save(employee);
-		return ResponseEntity.ok(updatedEmployee);
+		patient.setPatientName(patientDetails.getPatientName());
+		patient.setPatientContactNo(patientDetails.getPatientContactNo());
+		final Patient updatedPatient = patientRepository.save(patient);
+		return ResponseEntity.ok(updatedPatient);
 	}
 
 	@DeleteMapping("/patients/{id}")
-	public Map<String, Boolean> deleteEmployee(@PathVariable(value = "id") Long employeeId)
+	public Map<String, Boolean> deletePatient(@PathVariable(value = "id") Long patientId)
 			throws ResourceNotFoundException {
-		Patient employee = patientRepository.findById(employeeId)
-				.orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + employeeId));
+		Patient patient = patientRepository.findById(patientId)
+				.orElseThrow(() -> new ResourceNotFoundException("patient not found for this id :: " + patientId));
 
-		patientRepository.delete(employee);
+		patientRepository.delete(patient);
 		Map<String, Boolean> response = new HashMap<>();
 		response.put("deleted", Boolean.TRUE);
 		return response;
